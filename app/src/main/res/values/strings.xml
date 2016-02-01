@@ -9,4 +9,11 @@
     <string name="OK">Try Again</string>
     <string name="Network_Error">Unable to Connect with Server</string>
 
+    <string name="GPS_alert_title">GPS settings</string>
+    <string name="GPS_alert_message">GPS is not enabled. Do you to go to settings menu? </string>
+    <string name="GPS_alert_button">Settings</string>
+    <string name="GPS_alert_Nbutton"> Cancel</string>
+    <string name="title_activity_maps">Map</string>
+
+
 </resources>

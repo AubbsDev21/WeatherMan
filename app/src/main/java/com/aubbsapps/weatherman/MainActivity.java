@@ -1,17 +1,12 @@
 package com.aubbsapps.weatherman;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,7 +17,6 @@ import android.widget.Toast;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -31,10 +25,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Random;
 
 import butterknife.Bind;
-import butterknife.BindString;
 import butterknife.ButterKnife;
 
 
@@ -44,6 +36,9 @@ public class MainActivity extends Activity {
 
     private CurrentTemp mCurrentTemp;
     private ColorWheel mColorWheel = new ColorWheel();
+    private GPSTracker mGPSTracker;
+
+
 
 
     @Bind(R.id.timeText) TextView mTimeText;
@@ -62,8 +57,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+
+
+
      //natural state of progress bar
         mProgressBar.setVisibility(View.INVISIBLE);
+
+
+
 
         mRefreshImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +73,7 @@ public class MainActivity extends Activity {
                 getForecast();
             }
         });
-        getForecast();
+        //getForecast();
 
         mColorButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,9 +93,20 @@ public class MainActivity extends Activity {
 
 
     private void getForecast() {
+        double latitude = 0;
+        double longitude = 0;
+        if (mGPSTracker.canGetLocation) {
+            latitude = mGPSTracker.getLatitude();
+            longitude = mGPSTracker.getLongitude();
+        } else {
+            mGPSTracker.showSettingAlert();
+        }
+
         //more parameters for our URL variable
         String apiKey = "9fa5348fe6303cda3a39748bc4c1866b";
-        String forecastURL = "https://api.forecast.io/forecast/" + apiKey + "/37.8267,-122.423";
+
+
+        String forecastURL = "https://api.forecast.io/forecast/" + apiKey + "/" + latitude + "/" + longitude;
 
         if (isNetworkAvailable()) {
             toggleRefresh();
@@ -103,7 +116,7 @@ public class MainActivity extends Activity {
             Request request = new Request.Builder()
                     .url(forecastURL)
                     .build();
-          //calls or get data to use
+            //calls or get data to use
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
@@ -147,8 +160,7 @@ public class MainActivity extends Activity {
                     }
                 }
             });
-        }
-        else {
+        } else {
             Toast.makeText(this, getString(R.string.Network_Error),
                     Toast.LENGTH_LONG).show();
         }

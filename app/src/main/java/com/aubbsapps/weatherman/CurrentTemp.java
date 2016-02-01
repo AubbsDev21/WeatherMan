@@ -17,6 +17,7 @@ public class CurrentTemp {
     private String mTimeZone;
 
 
+
     public String getIcon() {return mIcon;}
 
     public int getIconId() {
@@ -115,6 +116,7 @@ public class CurrentTemp {
 
     public String getTimeZone() {
         //(String)int timezoneValue = mTimeZone.getInt("Los Angeles");
+
         return mTimeZone;
     }
 
